@@ -20,8 +20,8 @@
     }
 
     .video-overlay video {
-      width: min(90vw, 64rem);
-      max-height: 80vh;
+      width: min(82vw, 52rem);
+      max-height: 70vh;
       border-radius: 0.5rem;
       box-shadow: 0 25px 70px rgb(0 0 0 / 22%);
       opacity: 0;
@@ -118,5 +118,5 @@
   setTimeout(() => {
     document.body.classList.add("video-visible");
     document.querySelector(".video-overlay video").play().catch(() => {});
-  }, 3000);
+  }, 5000);
 </script>
