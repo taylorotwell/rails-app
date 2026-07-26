@@ -1,0 +1,122 @@
+<% content_for :title, "Users" %>
+<% content_for :head do %>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    .video-page {
+      transition: opacity 1.8s ease, filter 1.8s ease;
+    }
+
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+      background: rgb(255 255 255 / 45%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.8s ease;
+    }
+
+    .video-overlay video {
+      width: min(90vw, 64rem);
+      max-height: 80vh;
+      border-radius: 0.5rem;
+      box-shadow: 0 25px 70px rgb(0 0 0 / 22%);
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 1.8s ease, transform 1.8s ease;
+    }
+
+    body.video-visible .video-page {
+      opacity: 0.28;
+      filter: blur(1px);
+    }
+
+    body.video-visible .video-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.video-visible .video-overlay video {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .video-page,
+      .video-overlay,
+      .video-overlay video {
+        transition-duration: 0.01ms;
+      }
+    }
+  </style>
+<% end %>
+
+<main class="video-page mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-10">
+  <header class="flex items-end justify-between gap-6 border-b border-neutral-950 pb-6">
+    <div class="flex flex-col gap-2">
+      <p class="text-xs uppercase tracking-[0.14em] text-neutral-400">Application</p>
+      <h1 class="text-2xl font-medium tracking-tight sm:text-3xl">Ruby on Rails on Laravel Cloud</h1>
+    </div>
+
+    <p class="text-xs tabular-nums text-neutral-500">
+      <%= pluralize(@users.size, "record") %>
+    </p>
+  </header>
+
+  <section aria-label="Application users" class="flex-1">
+    <% if @users.any? %>
+      <% @users.each do |user| %>
+        <article class="grid grid-cols-[2rem_minmax(0,1fr)] gap-3 border-b border-neutral-200 px-1 py-5 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:items-center sm:gap-5 sm:px-3">
+          <span class="row-span-2 pt-0.5 text-xs tabular-nums text-neutral-400 sm:row-span-1 sm:pt-0">
+            <%= user.id.to_s.rjust(2, "0") %>
+          </span>
+
+          <div class="col-start-2 flex min-w-0 items-center gap-4 sm:col-start-auto">
+            <%= image_tag "https://avatars.laravel.cloud/#{ERB::Util.url_encode(user.email)}",
+              alt: "Avatar for #{user.name}",
+              class: "size-10 shrink-0 rounded-full bg-neutral-100",
+              loading: "lazy",
+              decoding: "async" %>
+
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium"><%= user.name %></p>
+              <p class="mt-1 truncate text-xs text-neutral-500"><%= user.email %></p>
+            </div>
+          </div>
+
+          <p class="col-start-2 text-xs text-neutral-400 sm:col-start-auto sm:text-right">
+            <span class="sm:hidden">Joined </span>
+            <time datetime="<%= user.created_at.iso8601 %>">
+              <%= user.created_at.strftime("%b %-d, %Y") %>
+            </time>
+          </p>
+        </article>
+      <% end %>
+    <% else %>
+      <div class="border-b border-neutral-200 px-1 py-12 text-sm text-neutral-500 sm:px-3">
+        No users found.
+      </div>
+    <% end %>
+  </section>
+
+  <footer class="flex items-center justify-between gap-4 pt-6 text-xs uppercase tracking-[0.1em] text-neutral-400">
+    <span>Rails <%= Rails.version %></span>
+    <span>User registry</span>
+  </footer>
+</main>
+
+<div class="video-overlay" role="dialog" aria-label="Featured video">
+  <video controls muted loop playsinline preload="auto">
+    <source src="/dhh-wtf.mp4" type="video/mp4">
+  </video>
+</div>
+
+<script>
+  setTimeout(() => {
+    document.body.classList.add("video-visible");
+    document.querySelector(".video-overlay video").play().catch(() => {});
+  }, 3000);
+</script>

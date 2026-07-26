@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
   def index
-    render json: User.all
+    @users = User.select(:id, :name, :email, :created_at).order(:id)
   end
 end
